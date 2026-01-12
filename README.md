@@ -1,16 +1,50 @@
-# React + Vite
+# 🌤️ Weather App (React + Open-Meteo)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, mobile-friendly **Weather Application** built with **React**, **Axios**, and **Open-Meteo API**.  
+It provides **current weather**, **24-hour hourly forecast**, **sunrise/sunset**, and a **live geo map** for any searched city.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## React Compiler
+- 🔍 Search weather by city name
+- 🌡️ Current temperature & wind speed
+- 🕒 **Hourly forecast (next 24 hours)**
+- 🌅 Sunrise & 🌇 Sunset times
+- 🗺️ **Live Geo Map** (OpenStreetMap)
+- 📱 Mobile-friendly UI
+- 🎨 Clean UI with Tailwind CSS
+- ⚡ Fast & free API (Open-Meteo)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🧠 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **React** (Hooks)
+- **Axios** (API requests)
+- **Tailwind CSS** (Styling)
+- **Open-Meteo API**
+- **OpenStreetMap iframe**
+
+---
+
+## 📸 App Structure
+
+Weather App
+├── Search City
+├── Current Weather
+│ ├── Temperature
+│ ├── Wind Speed
+│ └── Sunrise / Sunset
+├── Hourly Forecast (24h)
+│ └── Scrollable timeline
+└── Geo Map (City Location)
+
+---
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/your-username/weather-app.git
+cd weather-app
