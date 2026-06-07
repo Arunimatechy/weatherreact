@@ -7,9 +7,24 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const getWeatherIcon = (code) => {
+    if (code === 0) return "☀️";
+    if (code <= 3) return "⛅";
+    if (code <= 48) return "☁️";
+    if (code <= 67) return "🌧️";
+    if (code <= 77) return "❄️";
+    return "⛈️";
+  };
+
+  const formatHour = (time) =>
+    new Date(time).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
   const getCoordinates = async () => {
     if (!place.trim()) {
-      setError("Please enter a city name");
+      setError("Enter city name");
       return;
     }
 
@@ -21,10 +36,11 @@ const App = () => {
         `https://geocoding-api.open-meteo.com/v1/search?name=${place}`
       );
 
-      if (!geo.data.results) throw new Error();
+      if (!geo.data.results?.length) throw new Error();
 
       const { latitude, longitude } = geo.data.results[0];
-      getWeather(latitude, longitude);
+
+      await getWeather(latitude, longitude);
     } catch {
       setError("City not found");
       setLoading(false);
@@ -45,11 +61,7 @@ const App = () => {
       }));
 
       setWeather({
-        current: {
-          temperature: res.data.current_weather.temperature,
-          windspeed: res.data.current_weather.windspeed,
-          code: res.data.current_weather.weathercode,
-        },
+        current: res.data.current_weather,
         sunrise: res.data.daily.sunrise[0],
         sunset: res.data.daily.sunset[0],
         hourly: hourlyData,
@@ -64,99 +76,139 @@ const App = () => {
     }
   };
 
-  const formatHour = (time) =>
-    new Date(time).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600">
-      <div className="bg-white/90 backdrop-blur-md w-[380px] rounded-3xl shadow-2xl p-6">
+    <div className="min-h-screen bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700 flex items-center justify-center px-3 py-4">
 
-        <h1 className="text-2xl font-bold text-center mb-5 text-blue-700">
-          🌤 Weather App
+      {/* MAIN CARD (SMALLER + COMPACT) */}
+      <div className="w-full max-w-sm bg-white/15 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-4">
+
+        {/* TITLE */}
+        <h1 className="text-2xl font-bold text-center text-white mb-4">
+          🌤 Weather
         </h1>
 
         {/* SEARCH */}
-        <input
-          type="text"
-          placeholder="Enter city name"
-          value={place}
-          onChange={(e) => setPlace(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && getCoordinates()}
-          className="w-full p-3 rounded-full border focus:outline-none mb-3"
-        />
+        <div className="flex gap-2 mb-3">
 
-        <button
-          onClick={getCoordinates}
-          className="w-full bg-blue-600 text-white rounded-full py-3 font-semibold hover:bg-blue-700 transition"
-        >
-          Search
-        </button>
+          <input
+            type="text"
+            value={place}
+            onChange={(e) => setPlace(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && getCoordinates()}
+            placeholder="City"
+            className="flex-1 p-2 rounded-xl bg-white/90 outline-none text-sm"
+          />
 
+          <button
+            onClick={getCoordinates}
+            className="bg-white text-blue-700 px-3 rounded-xl text-sm font-semibold"
+          >
+            Go
+          </button>
+
+        </div>
+
+        {/* ERROR */}
         {error && (
-          <p className="text-red-500 text-center mt-3 font-semibold">
+          <p className="text-red-200 text-center text-sm mb-2">
             {error}
           </p>
         )}
 
+        {/* LOADING */}
         {loading && (
-          <p className="text-center mt-4 font-semibold">Loading...</p>
+          <div className="flex justify-center py-3">
+            <div className="w-8 h-8 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
         )}
 
-        {/* CURRENT WEATHER */}
+        {/* WEATHER */}
         {weather && !loading && (
           <>
-            <h2 className="text-xl text-center font-bold mt-5">
-              {place.toUpperCase()}
-            </h2>
 
-            <p className="text-5xl text-center font-extrabold my-3">
-              {weather.current.temperature}°
-            </p>
+            {/* CITY + TEMP */}
+            <div className="text-center text-white mb-3">
 
-            <p className="text-center text-gray-500 mb-4">
-              💨 Wind: {weather.current.windspeed} km/h
-            </p>
+              <h2 className="text-lg font-bold">
+                📍 {place}
+              </h2>
+
+              <div className="text-5xl">
+                {getWeatherIcon(weather.current.weathercode)}
+              </div>
+
+              <p className="text-4xl font-bold">
+                {weather.current.temperature}°
+              </p>
+
+              <p className="text-xs">
+                💨 {weather.current.windspeed} km/h
+              </p>
+
+            </div>
 
             {/* SUN */}
-            <div className="bg-gray-100 rounded-xl p-3 text-center text-sm mb-4">
-              <p>🌅 Sunrise: {weather.sunrise}</p>
-              <p>🌇 Sunset: {weather.sunset}</p>
+            <div className="grid grid-cols-2 gap-2 mb-3 text-white text-xs">
+
+              <div className="bg-white/20 p-2 rounded-xl text-center">
+                🌅 {weather.sunrise.split("T")[1].slice(0, 5)}
+              </div>
+
+              <div className="bg-white/20 p-2 rounded-xl text-center">
+                🌇 {weather.sunset.split("T")[1].slice(0, 5)}
+              </div>
+
             </div>
 
-            {/* HOURLY FORECAST */}
-            <h3 className="font-bold mb-2">🕒 Next 24 Hours</h3>
+            {/* HOURLY (SMALL SCROLL ROW) */}
+            <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
 
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {weather.hourly.map((hour, i) => (
+              {weather.hourly.map((h, i) => (
                 <div
                   key={i}
-                  className="min-w-[80px] bg-blue-100 rounded-xl p-2 text-center shadow"
+                  className="min-w-[70px] bg-white/20 rounded-xl p-2 text-center text-white"
                 >
-                  <p className="text-xs font-semibold">
-                    {formatHour(hour.time)}
+
+                  <p className="text-[10px]">
+                    {formatHour(h.time)}
                   </p>
-                  <p className="text-lg font-bold">{hour.temp}°</p>
-                  <p className="text-xs text-gray-600">
-                    💨 {hour.wind}
+
+                  <div className="text-lg">
+                    {getWeatherIcon(h.code)}
+                  </div>
+
+                  <p className="text-xs font-bold">
+                    {h.temp}°
                   </p>
+
                 </div>
               ))}
+
             </div>
 
-            {/* GEO MAP */}
-            <div className="mt-6 rounded-2xl overflow-hidden shadow-lg border">
+            {/* MAP (SMALL HEIGHT FIX) */}
+            <div className="rounded-xl overflow-hidden">
+
               <iframe
-                title="geomap"
+                title="map"
                 width="100%"
-                height="180"
+                height="140"
                 loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=${weather.lon - 0.1}%2C${weather.lat - 0.1}%2C${weather.lon + 0.1}%2C${weather.lat + 0.1}&layer=mapnik&marker=${weather.lat}%2C${weather.lon}`}
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${
+                  weather.lon - 0.1
+                }%2C${
+                  weather.lat - 0.1
+                }%2C${
+                  weather.lon + 0.1
+                }%2C${
+                  weather.lat + 0.1
+                }&layer=mapnik&marker=${
+                  weather.lat
+                }%2C${weather.lon}`}
               />
+
             </div>
+
           </>
         )}
       </div>
