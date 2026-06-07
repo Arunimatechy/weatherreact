@@ -154,18 +154,29 @@ This project helped me improve:
 - UI responsiveness
 - Project structuring in React
 
----
-
 ## 📸 Screenshots
 
-### Home Page
-_Add screenshot here_
+### 🏠 Home Page
 
-### Weather Results
-_Add screenshot here_
+![Home Page](screenshot/home-page.png)
 
-### Mobile View
-_Add screenshot here_
+Clean and modern weather search interface for finding weather information by city.
+
+---
+
+### 🌦️ Weather Results
+
+![Weather Results](screenshot/weather-results.png)
+
+Displays real-time temperature, weather conditions, humidity, and wind speed.
+
+---
+
+### 📱 Mobile View
+
+![Mobile View](screenshot/mobile-view.png)
+
+Responsive design optimized for mobile devices and tablets.
 
 ---
 
